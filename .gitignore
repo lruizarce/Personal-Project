@@ -8,3 +8,8 @@ wheels/
 
 # Virtual environments
 .venv
+.dockerignore
+.venv/
+.*env
+.env.**
+.env**.

@@ -1,0 +1,45 @@
+name: llm-service
+
+services:
+  backend:
+    build: ./backend
+    ports:
+      - 3000:3000
+    env_file:
+      - .env.db
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - full-stack-network
+    restart: unless-stopped
+
+  db:
+    image: postgres:15-alpine
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
+    ports:
+      - 5432:5432
+    env_file:
+      - .env.db
+    volumes:
+      - type: bind
+        source: ./db-config/init.sql
+        target: /docker-entrypoint-initdb.d/init.sql
+        read_only: true
+      - type: volume
+        source: postgresdb-data
+        target: /var/lib/postgresql/data
+    networks:
+      - full-stack-network
+    restart: unless-stopped
+
+volumes:
+  postgresdb-data:
+
+networks:
+  full-stack-network:

@@ -6,7 +6,7 @@ from ..utils.exceptions import LLMServiceError
 
 router = APIRouter(prefix='/chat')
 
-@router.post("/completions", status_code=status.HTTP_200_OK)
+@router.post("", status_code=status.HTTP_200_OK)
 async def chats(request: ChatRequest) -> ChatResponse:
     try:
         llm_service = await llm(request)

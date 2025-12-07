@@ -1,4 +1,4 @@
-from typing import Literal, List
+from typing import Literal, List, Annotated
 from pydantic import BaseModel, Field
 
 
@@ -8,10 +8,10 @@ class MessageInput(BaseModel):
     content: str
 
 class ChatRequest(BaseModel):
-    messages: List[MessageInput] = Field(min_length=1)
+    messages: Annotated[list[MessageInput], Field(min_length=1)]
     model: str | None = None
-    max_tokens: int | None = Field(default=None, gt=0)
-    temperature: float | None = Field(default=None, ge=0.0, le=1.0)
+    max_tokens: Annotated[int | None, Field(gt=0)] = None
+    temperature: Annotated[float | None, Field(ge=0.0, le=1.0)] = None
     system_prompt: str | None = None
 
 class UsageInfo(BaseModel):

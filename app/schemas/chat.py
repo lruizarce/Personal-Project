@@ -1,6 +1,7 @@
 from typing import Literal, Annotated
 from pydantic import BaseModel, Field
 
+
 class MessageInput(BaseModel):
     role: Annotated[Literal["system", "user", "assistant"], Field(description="Role of the message sender")]
     content: Annotated[str, Field(description="Content of the message")]

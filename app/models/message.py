@@ -1,7 +1,6 @@
 from uuid import UUID, uuid7
 from enum import StrEnum
-
-from typing import Literal, Annotated
+from typing import Annotated
 from datetime import datetime as dt, timezone
 from sqlmodel import SQLModel, Field
 
@@ -11,12 +10,12 @@ class Role(StrEnum):
     USER = "user"
     ASSISTANT = "assistant"
 
-class message(SQLModel, table=True):
+class Message(SQLModel, table=True):
     id: Annotated[UUID, Field(description="Auto generated unique identifier for messages. Primary Key", primary_key=True)] = Field(default_factory=uuid7)
-    conversation_id: UUID = Field(foreign_key="conversation.id", description="Foreign key to conversation")
-    role: Role
-    context: str
-    input_tokens: Annotated[int , Field(description="Tokens in (for user messages, including context)")]
+    conversation_id: Annotated[UUID, Field(foreign_key="conversation.id", description="Foreign key to conversation")]
+    role: Annotated[Role, Field(description="Message role")]
+    context: Annotated[str, Field(description="Message content")]
+    input_tokens: Annotated[int, Field(description="Tokens in (for user messages, including context)")]
     output_tokens: Annotated[int, Field(description="Tokens out (for assistant messages)")]
     latency_ms: Annotated[int, Field(description="Response time")]
     model: Annotated[str, Field(description="Actual model used")]

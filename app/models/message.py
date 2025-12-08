@@ -3,7 +3,7 @@ from enum import StrEnum
 
 from typing import Literal, Annotated
 from datetime import datetime as dt, timezone
-from sqlmodel import SQLModel, Field, Relationship
+from sqlmodel import SQLModel, Field
 
 
 class Role(StrEnum):

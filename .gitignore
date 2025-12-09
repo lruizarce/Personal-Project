@@ -14,3 +14,14 @@ wheels/
 .env.**
 .env**.
 examples/
+
+
+# Files to ignore
+*.log
+*.sqlite3
+*.db
+*.bak
+*.swp
+*.tmp
+*.old
+llm_response_service_plan.md

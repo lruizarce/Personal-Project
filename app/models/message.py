@@ -20,3 +20,4 @@ class Message(SQLModel, table=True):
     latency_ms: Annotated[int, Field(description="Response time")]
     model: Annotated[str, Field(description="Actual model used")]
     created_at: Annotated[dt, Field(description="Timestamp when message was created")] = Field(default_factory=lambda: dt.now(timezone.utc))
+    deleted_at: Annotated[dt | None, Field(description="Timestamp when conversation was soft deleted")] = None

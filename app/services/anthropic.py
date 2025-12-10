@@ -18,8 +18,8 @@ async def anthropic_response(request: ChatRequest) -> ChatResponse:
         if msg.role != "system"
     ]
     
-    model = request.model or os.environ.get("DEFAULT_MODEL")
-    max_tokens = request.max_tokens or int(os.environ.get("DEFAULT_TOKENS", 4096))
+    model = request.model or os.environ.get("ANTHROPIC_DEFAULT_MODEL")
+    max_tokens = request.max_tokens or int(os.environ.get("ANTHROPIC_DEFAULT_TOKENS", 4096))
     
     start_time = time.perf_counter()
     

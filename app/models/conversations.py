@@ -11,3 +11,4 @@ class Conversation(SQLModel, table=True):
     system_prompt: Annotated[str | None, Field(description="Optional system prompt override")] = None
     created_at: Annotated[dt, Field(description="Timestamp when conversation was created")] = Field(default_factory=lambda: dt.now(timezone.utc))
     updated_at: Annotated[dt, Field(description="Timestamp when conversation was last updated")] = Field(default_factory=lambda: dt.now(timezone.utc))
+    deleted_at: Annotated[dt | None, Field(description="Timestamp when conversation was soft deleted")] = None

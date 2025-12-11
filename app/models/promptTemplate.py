@@ -19,3 +19,4 @@ class PromptTemplate(SQLModel, table=True):
     variables: Annotated[list[VariableDefinition], Field(default=[], sa_column=Column(JSON))]
     created_at: Annotated[dt, Field(description="Timestamp when template was created")] = Field(default_factory=lambda: dt.now(timezone.utc))
     updated_at: Annotated[dt, Field(description="Timestamp when template was last updated")] = Field(default_factory=lambda: dt.now(timezone.utc))
+    deleted_at: Annotated[dt | None, Field(description="Timestamp when conversation was soft deleted")] = None

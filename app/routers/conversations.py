@@ -5,7 +5,7 @@ from fastapi import APIRouter, status, HTTPException
 from sqlmodel import select
 
 from ..database import SessionDep
-from ..models.conversations import Conversation
+from ..models.conversations import Conversation, ConversationUpdate
 from ..models.message import Message
 
 router = APIRouter(prefix='/conversations')
@@ -24,6 +24,7 @@ async def get_conversations(session: SessionDep) -> list[Conversation]:
     result = await session.execute(select(Conversation).where(Conversation.deleted_at == None))
     return result.scalars().all()
 
+
 @router.get("/{id}", status_code=status.HTTP_200_OK)
 async def get_conversation_details(id: UUID, session: SessionDep) -> Conversation:
     result = await session.execute(select(Conversation).where(Conversation.id == id, Conversation.deleted_at == None))
@@ -33,19 +34,23 @@ async def get_conversation_details(id: UUID, session: SessionDep) -> Conversatio
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Conversation not found.")
     return conversation
 
+
 @router.patch("/{id}", status_code=status.HTTP_200_OK)
-async def update_conversation(id: UUID, session: SessionDep, updates: dict) -> Conversation:
-    result = await session.execute(select(Conversation).where(Conversation.id == id, Conversation.deleted_at == None))
+async def update_conversation(id: UUID, session: SessionDep, updates: ConversationUpdate) -> Conversation:
+    result = await session.execute(select(Conversation).where(Conversation.id == id, Conversation.deleted_at is None))
     conversation = result.scalars().first()
 
     if not conversation:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Conversation not found.")
-    for k, v in updates.items():
-        if hasattr(conversation, k):
-            setattr(conversation, k, v)
 
+    for k, v in updates.model_dump(exclude_unset=True).items():
+        setattr(conversation, k, v)
+
+    conversation.updated_at = dt.now(timezone.utc)
     await session.commit()
+    await session.refresh(conversation)
     return conversation
+
 
 @router.delete("/{id}", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_conversation(id: UUID, session: SessionDep):
@@ -58,6 +63,7 @@ async def delete_conversation(id: UUID, session: SessionDep):
     conversation.deleted_at = dt.now(timezone.utc)
     await session.commit()
 
+
 @router.get("/{id}/messages", status_code=status.HTTP_200_OK)
 async def get_messages_conversation(id: UUID, session: SessionDep) -> list[Message]:
     result = await session.execute(select(Message).where(Message.conversation_id == id, Message.deleted_at == None))
@@ -67,6 +73,7 @@ async def get_messages_conversation(id: UUID, session: SessionDep) -> list[Messa
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="No messages found")
 
     return messages
+
 
 @router.delete("/{id}/messages", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_messages(id: UUID, session: SessionDep):

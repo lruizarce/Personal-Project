@@ -3,6 +3,12 @@ from uuid import UUID, uuid7
 from typing import Annotated
 from datetime import datetime as dt, timezone
 
+class ConversationUpdate(SQLModel):
+    title: str | None = None
+    model: str | None = None
+    system_prompt: str | None = None
+
+
 class Conversation(SQLModel, table=True):
     id: Annotated[UUID, Field(description="Auto generated unique identifier", primary_key=True)] = Field(default_factory=uuid7)
     user_id: Annotated[str | None, Field(description="Optional, for multi-user support")] = None

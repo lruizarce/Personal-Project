@@ -1,6 +1,6 @@
-from uuid import UUID, uuid7
+from uuid import UUID, uuid4
 from datetime import datetime as dt, timezone
-from typing import Annotated
+from typing import List
 from pydantic import BaseModel
 from sqlmodel import SQLModel, Field, Column, JSON
 
@@ -12,11 +12,11 @@ class VariableDefinition(BaseModel):
 
 
 class PromptTemplate(SQLModel, table=True):
-    id: Annotated[UUID, Field(description="Auto generated unique identifier", primary_key=True)] = Field(default_factory=uuid7)
-    name: Annotated[str, Field(description="Unique identifier for template")]
-    description: Annotated[str | None, Field(description="Optional description")] = None
-    content: Annotated[str, Field(description="Template with {{variable}} placeholders")]
-    variables: Annotated[list[VariableDefinition], Field(default=[], sa_column=Column(JSON))]
-    created_at: Annotated[dt, Field(description="Timestamp when template was created")] = Field(default_factory=lambda: dt.now(timezone.utc))
-    updated_at: Annotated[dt, Field(description="Timestamp when template was last updated")] = Field(default_factory=lambda: dt.now(timezone.utc))
-    deleted_at: Annotated[dt | None, Field(description="Timestamp when conversation was soft deleted")] = None
+    id: UUID = Field(default_factory=uuid4, primary_key=True, description="Auto generated unique identifier")
+    name: str = Field(description="Unique identifier for template")
+    description: str | None = Field(default=None, description="Optional description")
+    content: str = Field(description="Template with {{variable}} placeholders")
+    variables: List[VariableDefinition] = Field(default=[], sa_column=Column(JSON))
+    created_at: dt = Field(default_factory=lambda: dt.now(timezone.utc), description="Timestamp when template was created")
+    updated_at: dt = Field(default_factory=lambda: dt.now(timezone.utc), description="Timestamp when template was last updated")
+    deleted_at: dt | None = Field(default=None, description="Timestamp when template was soft deleted")
